@@ -12,7 +12,7 @@ func init() {
 
 
 
-func node_exists(path []string, receptacle map[string]interface{}) (found bool) {
+func SubMapNodeExists(path []string, receptacle map[string]interface{}) (found bool) {
 
 	// returns true if the key exists and its value is a submap[string]interface{}
 	key_and_map := func(key string, m map[string]interface{}) (submap map[string]interface{}, foundkm bool) {
@@ -27,7 +27,7 @@ func node_exists(path []string, receptacle map[string]interface{}) (found bool) 
 	var sub_map map[string]interface{}
 	if sub_map, found = key_and_map(path[0], receptacle); found {
 		if len(path) > 1 {
-			return node_exists(path[1:], sub_map)
+			return SubMapNodeExists(path[1:], sub_map)
 		} // otherwise just return the value of 'found'
 	} else {
 		log.Debugf("key (%v) not found", path[0])
@@ -80,6 +80,7 @@ func main() {
 	var receptacle map[string]interface{}
 	if err := dec.Decode(&receptacle); err != nil {
 		log.Fatalf("decoding error %v", err.Error())
+		//todo: if this error happens, assertion fails, obviously. but don't kill the program
 	}
 
 	path := "/user/properties/object/value"
@@ -88,7 +89,7 @@ func main() {
 
 	// the slice of strings is depth-first navigation of the series of map[string]interface{} parsed by the decoder
 	// at each node, represented by a key in the map, the next nested map is checked
-	log.Debugf("node found at path[%s]=%v", path, node_exists(nodes, receptacle))
+	log.Debugf("node found at path[%s]=%v", path, SubMapNodeExists(nodes, receptacle))
 
 }
 
