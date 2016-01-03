@@ -33,24 +33,24 @@ func splitPath(path string) []string {
 	return strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
 }
 
-func (jas *JsonAssertion) AssertObjectAtPath(path string) (ok bool) {
+func (jas *JsonAssertion) AssertObjectAt(path string) (ok bool) {
 	_ , ok = jas.objectExists(splitPath(path),jas.receptacle)
 	return
 }
 
-func (jas *JsonAssertion) AssertNumberAtPath(val float64, path string) (ok bool) {
+func (jas *JsonAssertion) AssertNumberAt(path string, val float64 ) (ok bool) {
 	asserted := val
 	val,ok = jas.floatExists(splitPath(path))
 	return ok && val == asserted
 }
 
-func (jas *JsonAssertion) AssertBoolAtPath(val bool,path string) (ok bool) {
+func (jas *JsonAssertion) AssertBoolAt(path string,val bool) (ok bool) {
 	asserted := val
 	val, ok = jas.boolExists(splitPath(path))
 	return ok && val == asserted
 }
 
-func (jas *JsonAssertion) AssertStringAtPath(val string,path string) (ok bool) {
+func (jas *JsonAssertion) AssertStringAt(path string,val string) (ok bool) {
 	asserted := val
 	val, ok = jas.stringExists(splitPath(path))
 	return ok && val == asserted
@@ -178,24 +178,24 @@ func main() {
 
 	jas, _ = MakeJsonAssertion(json_data)
 	path := "/user/properties/object/inner_object"
-	ok = jas.AssertObjectAtPath(path)
+	ok = jas.AssertObjectAt(path)
 	log.Debugf("object found at path [%v], assertion?=%v",path,ok)
 
 	jas, _ = MakeJsonAssertion(json_data)
 	path = "/user/properties/object/inner_object/baz"
 	var val float64 = 11235
-	ok = jas.AssertNumberAtPath(val,path)
+	ok = jas.AssertNumberAt(path,val)
 	log.Debugf("number %v found at path [%v], assertion?=%v",val,path,ok)
 
 
 	jas, _ = MakeJsonAssertion(json_data)
 	path = "/user/properties/boolean/value"
-	ok = jas.AssertBoolAtPath(true,path)
+	ok = jas.AssertBoolAt(path,true)
 	log.Debugf("bool found at path [%v], assertion?=%v",path,ok)
 
 	jas, _ = MakeJsonAssertion(json_data)
 	path = "/user/properties/string/value"
-	ok = jas.AssertStringAtPath("foobar",path)
+	ok = jas.AssertStringAt(path,"foobar")
 	log.Debugf("string [%v] found at path [%v], assertion?=%v","foobar",path,ok)
 
 
