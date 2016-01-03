@@ -29,34 +29,32 @@ func MakeJsonAssertion(data string) (jas *JsonAssertion, err error) {
 	return
 }
 
+func splitPath(path string) []string {
+	return strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
+}
+
 func (jas *JsonAssertion) AssertObjectAtPath(path string) (ok bool) {
-	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	_ , ok = jas.objectExists(nodes,jas.receptacle)
+	_ , ok = jas.objectExists(splitPath(path),jas.receptacle)
 	return
 }
 
-func (jas *JsonAssertion) AssertNumberAtPath(number float64, path string) (ok bool) {
-	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	var val float64
-	val,ok = jas.floatExists(nodes)
-	return ok && number==val
+func (jas *JsonAssertion) AssertNumberAtPath(val float64, path string) (ok bool) {
+	asserted := val
+	val,ok = jas.floatExists(splitPath(path))
+	return ok && val == asserted
 }
 
-
-func (jas *JsonAssertion) AssertBoolAtPath(tf bool,path string) (ok bool) {
-	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	var val bool
-	val, ok = jas.boolExists(nodes)
-	return ok && tf==val
+func (jas *JsonAssertion) AssertBoolAtPath(val bool,path string) (ok bool) {
+	asserted := val
+	val, ok = jas.boolExists(splitPath(path))
+	return ok && val == asserted
 }
 
-func (jas *JsonAssertion) AssertStringAtPath(text string,path string) (ok bool) {
-	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	var val string
-	val, ok = jas.stringExists(nodes)
-	return ok && text==val
+func (jas *JsonAssertion) AssertStringAtPath(val string,path string) (ok bool) {
+	asserted := val
+	val, ok = jas.stringExists(splitPath(path))
+	return ok && val == asserted
 }
-
 
 
 func last(slice []string) string {
