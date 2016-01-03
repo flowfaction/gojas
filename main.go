@@ -15,7 +15,6 @@ func init() {
 
 type JsonAssertion struct {
 	//	Path string
-	Ok         bool
 	json       string
 	receptacle map[string]interface{}
 	decoder    *json.Decoder
@@ -30,24 +29,33 @@ func MakeJsonAssertion(data string) (jas *JsonAssertion, err error) {
 	return
 }
 
-func (jas *JsonAssertion) AssertNumberAtPath(number int, path string) bool {
+func (jas *JsonAssertion) AssertObjectAtPath(path string) (ok bool) {
 	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	_,jas.Ok = jas.floatExists(nodes,jas.receptacle)
-	return jas.Ok
+	_ , ok = jas.objectExists(nodes,jas.receptacle)
+	return
 }
 
-func (jas *JsonAssertion) AssertObjectAtPath(path string) bool {
+func (jas *JsonAssertion) AssertNumberAtPath(number float64, path string) (ok bool) {
 	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	_ , jas.Ok = jas.objectExists(nodes,jas.receptacle)
-	return jas.Ok
+	var val float64
+	val,ok = jas.floatExists(nodes)
+	return ok && number==val
 }
 
-func (jas *JsonAssertion) AssertBoolAtPath(tf bool,path string) bool {
+
+func (jas *JsonAssertion) AssertBoolAtPath(tf bool,path string) (ok bool) {
 	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
-	_ , jas.Ok = jas.boolExists(nodes,jas.receptacle)
-	return jas.Ok
+	var val bool
+	val, ok = jas.boolExists(nodes)
+	return ok && tf==val
 }
 
+func (jas *JsonAssertion) AssertStringAtPath(text string,path string) (ok bool) {
+	nodes := strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
+	var val string
+	val, ok = jas.stringExists(nodes)
+	return ok && text==val
+}
 
 
 
@@ -60,6 +68,7 @@ func headUpToLast(slice []string) []string {
 }
 
 
+// recursive
 func (jas *JsonAssertion) objectExists(path []string, receptacle map[string]interface{}) (sub_map map[string]interface{}, found bool) {
 
 	// local func to clean up the recursion conditional
@@ -86,7 +95,7 @@ func (jas *JsonAssertion) objectExists(path []string, receptacle map[string]inte
 }
 
 
-func (jas *JsonAssertion) floatExists(path []string, receptacle map[string]interface{}) (value float64,found bool) {
+func (jas *JsonAssertion) floatExists(path []string) (value float64,found bool) {
 	leaf_map, parent_found := jas.objectExists(headUpToLast(path),jas.receptacle)
 	isFloat := func() bool {
 		return reflect.TypeOf(leaf_map[last(path)]).Kind()==reflect.Float64
@@ -99,7 +108,7 @@ func (jas *JsonAssertion) floatExists(path []string, receptacle map[string]inter
 	return
 }
 
-func (jas *JsonAssertion) boolExists(path []string, receptacle map[string]interface{}) (value bool,found bool) {
+func (jas *JsonAssertion) boolExists(path []string) (value bool,found bool) {
 	leaf_map, parent_found := jas.objectExists(headUpToLast(path),jas.receptacle)
 	isBool := func() bool {
 		return reflect.TypeOf(leaf_map[last(path)]).Kind()==reflect.Bool
@@ -112,6 +121,18 @@ func (jas *JsonAssertion) boolExists(path []string, receptacle map[string]interf
 	return
 }
 
+func (jas *JsonAssertion) stringExists(path []string) (value string,found bool) {
+	leaf_map, parent_found := jas.objectExists(headUpToLast(path),jas.receptacle)
+	isString := func() bool {
+		return reflect.TypeOf(leaf_map[last(path)]).Kind()==reflect.String
+	}
+	if parent_found && len(leaf_map)>0 && isString() {
+		var something interface{}
+		something, found = leaf_map[last(path)]
+		value = something.(string)
+	}
+	return
+}
 
 
 func main() {
@@ -158,21 +179,26 @@ func main() {
 	var jas *JsonAssertion
 
 	jas, _ = MakeJsonAssertion(json_data)
-	path := "/user/properties/object/value"
+	path := "/user/properties/object/inner_object"
 	ok = jas.AssertObjectAtPath(path)
-	log.Debugf("object found at path [%v], ok=%v",path,ok)
+	log.Debugf("object found at path [%v], assertion?=%v",path,ok)
 
 	jas, _ = MakeJsonAssertion(json_data)
 	path = "/user/properties/object/inner_object/baz"
-	ok = jas.AssertNumberAtPath(11235,path)
-	log.Debugf("number found at path [%v], ok=%v",path,ok)
+	var val float64 = 11235
+	ok = jas.AssertNumberAtPath(val,path)
+	log.Debugf("number %v found at path [%v], assertion?=%v",val,path,ok)
 
 
 	jas, _ = MakeJsonAssertion(json_data)
 	path = "/user/properties/boolean/value"
 	ok = jas.AssertBoolAtPath(true,path)
-	log.Debugf("bool found at path [%v], ok=%v",path,ok)
+	log.Debugf("bool found at path [%v], assertion?=%v",path,ok)
 
+	jas, _ = MakeJsonAssertion(json_data)
+	path = "/user/properties/string/value"
+	ok = jas.AssertStringAtPath("foobar",path)
+	log.Debugf("string [%v] found at path [%v], assertion?=%v","foobar",path,ok)
 
 
 }
