@@ -12,6 +12,18 @@ func init() {
 }
 
 
+func splitPath(path string) []string {
+	return strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
+}
+
+func last(slice []string) string {
+	return slice[len(slice)-1]
+}
+
+func headUpToLast(slice []string) []string {
+	return slice[:len(slice)-1]
+}
+
 
 type JsonAssertion struct {
 	//	Path string
@@ -27,10 +39,6 @@ func MakeJsonAssertion(data string) (jas *JsonAssertion, err error) {
 		log.Errorf("decoding error %v", err.Error())
 	}
 	return
-}
-
-func splitPath(path string) []string {
-	return strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
 }
 
 func (jas *JsonAssertion) AssertObjectAt(path string) (ok bool) {
@@ -56,14 +64,28 @@ func (jas *JsonAssertion) AssertStringAt(path string,val string) (ok bool) {
 	return ok && val == asserted
 }
 
+func (jas *JsonAssertion) AssertArrayAt(path string,val []interface{}) (ok bool) {
+	asserted := val
+	val, ok = jas.arrayExists(splitPath(path))
+	log.Debugf(`
+		val(%v)
+		/val/type(%v)
+		/exists(%v)
+		/path(%v)
+		/asserted(%v)
+		/asserted/type(%v)
+		/deepequal?(%v)`,val,reflect.TypeOf(val),ok,path,asserted,reflect.TypeOf(asserted),reflect.DeepEqual(val, asserted))
 
-func last(slice []string) string {
-	return slice[len(slice)-1]
+	for v := range val {
+		 log.Debugf("item type in val/[]interface{} = (%v)",reflect.TypeOf(v))
+	}
+	for x := range asserted {
+		 log.Debugf("item type in asserted/[]interface{} = (%v)",reflect.TypeOf(x))
+	}
+
+	return ok && reflect.DeepEqual(val, asserted)
 }
 
-func headUpToLast(slice []string) []string {
-	return slice[:len(slice)-1]
-}
 
 
 // recursive
@@ -105,6 +127,34 @@ func (jas *JsonAssertion) floatExists(path []string) (value float64,found bool) 
 	}
 	return
 }
+
+//todo extend for other json array element types (that we want to support)
+func (jas *JsonAssertion) arrayExists(path []string) (value []interface{},found bool) {
+	leaf_map, parent_found := jas.objectExists(headUpToLast(path),jas.receptacle)
+
+	isArray := func() bool {
+		log.Debugf("type of leaf_map item=(%v) @ keyname(%v)",reflect.TypeOf(leaf_map[last(path)]),last(path))
+//		return reflect.TypeOf(leaf_map[last(path)]).Kind()==reflect.SliceOf(reflect.Float64)
+		val, isSlice := leaf_map[last(path)].([]interface{})
+		if isSlice {
+			log.Debugf("type assertion ok:(%v)",val)
+		} else {
+			log.Debug("FAIL:type assertion failed!")
+		}
+		return isSlice
+	}
+
+	if parent_found && len(leaf_map)>0 && isArray() {
+		var something interface{}
+		something, found = leaf_map[last(path)]
+		log.Debugf("something.type=(%v) /found?(%v)",reflect.TypeOf(something),found)
+		value = something.([]interface{})
+	}
+
+	log.Debugf("was Array? (%v)",isArray())
+	return
+}
+
 
 func (jas *JsonAssertion) boolExists(path []string) (value bool,found bool) {
 	leaf_map, parent_found := jas.objectExists(headUpToLast(path),jas.receptacle)
@@ -198,5 +248,10 @@ func main() {
 	ok = jas.AssertStringAt(path,"foobar")
 	log.Debugf("string [%v] found at path [%v], assertion?=%v","foobar",path,ok)
 
+	jas, _ = MakeJsonAssertion(json_data)
+	path = "/user/properties/array/value"
+	arr := []interface{}{1,1,2,3,5,8}
+	ok = jas.AssertArrayAt(path,arr)
+	log.Debugf("array [%v] found at path [%v], assertion?=%v",arr,path,ok)
 
 }
