@@ -1,5 +1,0 @@
-validates unknown bytes as a correct json document - mostly through built-in decoding error generation and checking
-provides higher level validations on the structure of the json documents, but only where amplifying value of built in checking
-converts a validated json buffer to a tree structure, that is navigable and where traversal is easily specified via a path
-executes assertions against the tree through a text dsl, or variadics, resty url equivalents, etc
-takes care of hairy reflection tasks to provide high-value code generation, dsl, _ ...
