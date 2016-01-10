@@ -16,7 +16,7 @@ import (
 //----------------------------------------------------------------------------------------------------------------------
 
 func init() {
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.WarnLevel)
 }
 
 func splitPath(path string) []string {

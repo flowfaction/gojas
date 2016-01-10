@@ -76,13 +76,13 @@ func main() {
 
 	jas, _ = gojas.MakeJsonAssertion(json_data)
 	path = "/user/properties/numberArray/value"
-	farr := []interface{}{1.0, 1.0, 2.0, 3.0, 5.0, 8.0} // json numbers are always floats
+	farr := []interface{}{1.0, 1.0, 2.0, 3.0, 5.0, 8.0}
 	ok = jas.IsFloatArrayAt(path, farr)
 	log.Debugf("float array [%v] found at path [%v], assertion?=%v", farr, path, ok)
 
 	jas, _ = gojas.MakeJsonAssertion(json_data)
 	path = "/user/properties/stringArray/value"
-	sarr := []interface{}{"1","1","2","3","5","8"} // json numbers are always floats
+	sarr := []interface{}{"1","1","2","3","5","8"}
 	ok = jas.IsStringArrayAt(path, sarr)
 	log.Debugf("string array [%v] found at path [%v], assertion?=%v", sarr, path, ok)
 
