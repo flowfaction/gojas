@@ -23,9 +23,7 @@ import (
 
 func AssertObjectAtPath(t *testing.T, data, path string) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		if ok = jas.IsObjectAt(path); ok {
-			t.Log("AssertObjectAtPath=true") // todo: remove when confident
-		}
+		ok = jas.IsObjectAt(path)
 	} else {
 		t.Error("AssertObjectAtPath"+"Failed to parse test data.")
 	}
@@ -34,9 +32,7 @@ func AssertObjectAtPath(t *testing.T, data, path string) (ok bool) {
 
 func AssertBoolAtPath(t *testing.T, data, path string, asserted bool) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		if ok = jas.IsBoolAt(path,asserted); ok {
-			t.Log("AssertBoolAtPath=true") // todo: remove when confident
-		}
+		ok = jas.IsBoolAt(path,asserted)
 	} else {
 		t.Error("AssertBoolAtPath"+"Failed to parse test data.")
 	}
@@ -47,9 +43,7 @@ func AssertBoolAtPath(t *testing.T, data, path string, asserted bool) (ok bool) 
 
 func AssertStringAtPath(t *testing.T, data, path, asserted string) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		if ok = jas.IsStringAt(path,asserted); ok {
-			t.Log("AssertStringAtPath=true") // todo: remove when confident
-		}
+		ok = jas.IsStringAt(path,asserted)
 	} else {
 		t.Error("AssertStringAtPath"+"Failed to parse test data.")
 	}
@@ -57,9 +51,7 @@ func AssertStringAtPath(t *testing.T, data, path, asserted string) (ok bool) {
 }
 func AssertStringArrayAtPath(t *testing.T, data, path string, asserted []interface{}) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		if ok = jas.IsStringArrayAt(path,asserted); ok {
-			t.Log("AssertStringArrayAtPath=true") // todo: remove when confident
-		}
+		ok = jas.IsStringArrayAt(path,asserted)
 	} else {
 		t.Error("AssertStringArrayAtPath"+"Failed to parse test data.")
 	}
@@ -68,9 +60,7 @@ func AssertStringArrayAtPath(t *testing.T, data, path string, asserted []interfa
 
 func AssertNumberAtPath(t *testing.T, data, path string, asserted float64) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		if ok = jas.IsNumberAt(path,asserted); ok {
-			t.Log("AssertNumberAtPath=true") // todo: remove when confident
-		}
+		ok = jas.IsNumberAt(path,asserted)
 	} else {
 		t.Error("AssertNumberAtPath"+"Failed to parse test data.")
 	}
@@ -79,9 +69,7 @@ func AssertNumberAtPath(t *testing.T, data, path string, asserted float64) (ok b
 
 func AssertFloatArrayAtPath(t *testing.T, data, path string, asserted []interface{}) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		if ok = jas.IsFloatArrayAt(path,asserted); ok {
-			t.Log("AssertFloatArrayAtPath=true") // todo: remove when confident
-		}
+		ok = jas.IsFloatArrayAt(path,asserted)
 	} else {
 		t.Error("AssertFloatArrayAtPath"+"Failed to parse test data.")
 	}
