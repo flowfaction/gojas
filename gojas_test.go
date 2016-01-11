@@ -2,49 +2,7 @@ package gojas
 
 import (
 	"testing"
-//	"fmt"
 )
-
-var json_data string = `{
-		"user":{
-			"properties":{
-				"string":{
-					"type": "string",
-					"value": "foobar"
-				},
-				"number":{
-					"type": "number",
-					"value": 42
-				},
-				"boolean":{
-					"type": "boolean",
-					"value": true
-				},
-				"numberArray":{
-					"type": "array",
-					"value": [1,1,2,3,5,8]
-				},
-				"stringArray":{
-					"type": "array",
-					"value": ["1","1","2","3","5","8"]
-				},
-				"object":{
-					"type": "object",
-					"innerObject": {
-						"foo" : "bar",
-						"baz": 11235,
-						"key" : "value"
-					}
-				}
-			},
-			"propertypeer": {
-				"peer": 1
-			}
-		},
-		"userpeer" :  {
-			"peer" : 1
-		}
-}`
 
 
 func TestAssertionMaker(t *testing.T) {
@@ -83,7 +41,6 @@ func TestNumberAt(t *testing.T) {
 	path := "/user/properties/object/innerObject/baz"
 	var val float64 = 11235
 	ok := jas.IsNumberAt(path, val)
-
 	if !ok {
 		t.Error("gojas: expected to find float(11235) in sample doc @ (%v)",path)
 	}
@@ -110,7 +67,6 @@ func TestBoolAt(t *testing.T) {
 
 	path := "/user/properties/boolean/value"
 	ok := jas.IsBoolAt(path, true)
-
 	if !ok {
 		t.Error("gojas: expected to find bool(true) in sample doc @ (%v)",path)
 	}
@@ -164,12 +120,11 @@ func TestStringArrayAt(t *testing.T) {
 
 	jas, _ := MakeJsonAssertion(json_data)
 
+	path := "/user/properties/stringArray/value"
 	original_val := []interface{}{"1","1","2","3","5","8"}
 
-	path := "/user/properties/stringArray/value"
 	val := original_val
 	ok := jas.IsStringArrayAt(path, val)
-
 	if !ok {
 		t.Error("gojas: expected to find []string in sample doc @ (%v)",path)
 	}
@@ -179,6 +134,12 @@ func TestStringArrayAt(t *testing.T) {
 	ok = jas.IsStringArrayAt(path, val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find []string @ (%v)",path)
+	}
+
+	val = []interface{}{"1","1","1","3","5","8"} // same length, but diff value at index
+	ok = jas.IsStringArrayAt(path, val)
+	if ok {
+		t.Errorf("Failed to detect unequal slices of strings, of same length @ (%v)",path)
 	}
 
 
@@ -200,7 +161,6 @@ func TestFloatArrayAt(t *testing.T) {
 	path := "/user/properties/numberArray/value"
 	val := original_val
 	ok := jas.IsFloatArrayAt(path, val)
-
 	if !ok {
 		t.Error("gojas: expected to find []float64 in sample doc @ (%v)",path)
 	}
@@ -210,6 +170,13 @@ func TestFloatArrayAt(t *testing.T) {
 	ok = jas.IsFloatArrayAt(path, val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find []float64 @ (%v)",path)
+	}
+
+
+	val = []interface{}{1.0, 1.0, 1.0, 3.0, 5.0, 8.0} // same length, diff val at index
+	ok = jas.IsFloatArrayAt(path, val)
+	if ok {
+		t.Errorf("Failed to detect equal slices of float64s, of same length @ (%v)",path)
 	}
 
 
