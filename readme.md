@@ -1,4 +1,4 @@
-# Gojas: Golang JSON Assertions
+# Gojas: Golang JSON Assertions. v0.1.0
 
 ## Goals
 
