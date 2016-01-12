@@ -124,7 +124,7 @@ func (jas *JsonAssertion) floatAtPath(path []string) (value float64, found bool)
 	if parent_found && len(leaf_map) > 0 && isFloat() {
 		var something interface{}
 		something, found = leaf_map[last(path)]
-		value = something.(float64) // todo: catch all bad type assertion
+		value, found = something.(float64)
 	}
 	return
 }
@@ -150,7 +150,7 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 	if parent_found && len(leaf_map) > 0 && isArray() {
 		var something interface{}
 		something, found = leaf_map[last(path)]
-		value = something.([]interface{}) // todo: catch all bad type assertion
+		value, found = something.([]interface{})
 	}
 
 	if logme {
@@ -167,7 +167,7 @@ func (jas *JsonAssertion) boolAtPath(path []string) (value bool, found bool) {
 	if parent_found && len(leaf_map) > 0 && isBool() {
 		var something interface{}
 		something, found = leaf_map[last(path)]
-		value = something.(bool)
+		value, found = something.(bool)
 	}
 	return
 }
@@ -180,7 +180,7 @@ func (jas *JsonAssertion) stringAtPath(path []string) (value string, found bool)
 	if parent_found && len(leaf_map) > 0 && isString() {
 		var something interface{}
 		something, found = leaf_map[last(path)]
-		value = something.(string)
+		value, found = something.(string)
 	}
 	return
 }
