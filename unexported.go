@@ -30,7 +30,7 @@ func tail(slice []string) []string {
 
 // compares two slices of interfaces, that are type-asserted to string elements, and compared for length
 // and string comparisons, in order.
-func isIdenticalStringInterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
+func areIdenticalStringInterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
 	if len(left) == len(right) {
 
 		for i, item := range left {
@@ -57,9 +57,40 @@ func isIdenticalStringInterfaceSlices(left []interface{}, right []interface{}) (
 	return
 }
 
+
+//Compares two slices of strings, asserted from interface{}. If type assertion fails, or slices are different lengths,
+// or values are not the same (order free, using map), it returns false
+func areMatchingStringInterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
+	if len(left) == len(right) {
+		// make the map for the left slice and populate it
+		itemMap := make(map[string]bool,len(left))
+		for _, item := range left {
+			if value, sok := item.(string); sok {
+				itemMap[value]=true
+			} else { // not a string, bail
+				return
+			}
+		}
+		// now use the left-map to compare with right-slice
+		for _, item := range right {
+			if value, sok := item.(string); sok {
+				if !itemMap[value] { // rval not found in lmap
+					return
+				}
+			} else { // not a string, bail
+				return
+			}
+		}
+		identical = true
+	}
+	return
+}
+
+
+
 // compares two slices of interfaces, that are type-asserted to float64 elements, and compared for length
 // and float comparisons, in order.
-func isIdenticalFloat64InterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
+func areIdenticalFloat64InterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
 	if len(left) == len(right) {
 
 		for i, item := range left {
@@ -83,6 +114,12 @@ func isIdenticalFloat64InterfaceSlices(left []interface{}, right []interface{}) 
 	}
 	return
 }
+
+
+
+
+
+
 
 // recursive
 func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]interface{}) (sub_map map[string]interface{}, found bool) {

@@ -52,13 +52,13 @@ func (jas *JsonAssertion) IsStringAt(path string, val string) (ok bool) {
 func (jas *JsonAssertion) IsIdenticalFloatSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
 	val, ok = jas.arrayAtPath(splitPath(path))
-	return ok && isIdenticalFloat64InterfaceSlices(val,asserted)
+	return ok && areIdenticalFloat64InterfaceSlices(val,asserted)
 }
 
 func (jas *JsonAssertion) IsIdenticalStringSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
 	val, ok = jas.arrayAtPath(splitPath(path))
-	return ok && isIdenticalStringInterfaceSlices(val,asserted)
+	return ok && areIdenticalStringInterfaceSlices(val,asserted)
 }
 
 // IsMatchingStringArrayAt
@@ -67,28 +67,7 @@ func (jas *JsonAssertion) IsIdenticalStringSliceAt(path string, val []interface{
 func (jas *JsonAssertion) IsMatchingStringSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
 	val, ok = jas.arrayAtPath(splitPath(path))
-
-	// here we use a local func, that uses a map to compare without regard to order
-	arraysMatch := func() (matches bool) {
-		if len(val) == len(asserted) {
-			itemMap := make(map[string]bool,len(val))
-			matches = true
-			for _, item := range val {  // range over found array, populating a map
-				value := item.(string)   // todo: this will panic if fails. need gentler approach for testings
-				itemMap[value]=true
-			}
-			for _, item := range asserted {  // range over found array, populating a map
-				value := item.(string)   // todo: this will panic if fails. need gentler approach for testings
-				if !itemMap[value] {
-					matches = false
-					break
-				} // else asserted item was found in map
-			}
-		}
-		return
-	}
-	// val comes from json retrieval, asserted comes from 'client' code
-	return ok && arraysMatch()
+	return ok && areMatchingStringInterfaceSlices(val,asserted)
 }
 
 
