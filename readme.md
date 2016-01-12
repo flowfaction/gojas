@@ -1,16 +1,14 @@
 # Gojas: Golang JSON Assertions. v0.1.0
 
-## Goals
+## Values
 
 ### minimal
 ### compatible
 ### performant
 ### hackable
 ### simplifying
+### low dep
 
-## To Do
+## Pull Requests
 
-### separate out the contents of gojas.go. leave only exported stuff
-### move the internal stuff to its own file
-### write tests
-### remove the ./main dir ?
+Your PRs are welcome! The goal is to evolve this package toward more testing scenarios and reliability. Accepting issue posts as well, thank you.
