@@ -1,7 +1,7 @@
 package gojas
 
 import (
-	"fmt"
+//	"fmt"
 	"reflect"
 	"strings"
 )
@@ -61,28 +61,44 @@ func areIdenticalStringInterfaceSlices(left []interface{}, right []interface{}) 
 //Compares two slices of strings, asserted from interface{}. If type assertion fails, or slices are different lengths,
 // or values are not the same (order free, using map), it returns false
 func areMatchingStringInterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
+
 	if len(left) == len(right) {
-		// make the map for the left slice and populate it
-		itemMap := make(map[string]bool,len(left))
+		// make the frequency map for the left slice and populate it
+		lmap := make(map[string]int,len(left))
 		for _, item := range left {
 			if value, sok := item.(string); sok {
-				itemMap[value]=true
+				lmap[value]=lmap[value]+1
 			} else { // not a string, bail
 				return
 			}
 		}
-		// now use the left-map to compare with right-slice
+
+		// make the frequency map for the right slice and populate it
+		rmap := make(map[string]int,len(right))
 		for _, item := range right {
 			if value, sok := item.(string); sok {
-				if !itemMap[value] { // rval not found in lmap
-					return
-				}
+				rmap[value]=rmap[value]+1
 			} else { // not a string, bail
 				return
 			}
 		}
+
+		// range on left map, using the lkey to look up on rmap
+		for lk,lv := range lmap {
+			if rv, rok := rmap[lk]; rok {
+				// lkey found in rmap, but same frequency?
+				if lv!=rv {
+					return
+				}
+
+			} else { // left key not found in rmap, so bail
+				return
+			}
+		}
+
 		identical = true
 	}
+
 	return
 }
 
@@ -128,14 +144,14 @@ func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]inte
 	// returns true if the key exists and its value is a submap[string]interface{}
 	key_and_map := func(key string, m map[string]interface{}) (submap map[string]interface{}, foundkm bool) {
 		if sub, ok := m[key]; ok {
-			if logme {
-				fmt.Printf("type [%v] found at [%v]\n", reflect.TypeOf(sub), key)
-			}
+//			if logme {
+//				fmt.Printf("type [%v] found at [%v]\n", reflect.TypeOf(sub), key)
+//			}
 			submap, foundkm = sub.(map[string]interface{})
 		} else {
-			if logme {
-				fmt.Printf("key not found in map (%v)\n", key)
-			}
+//			if logme {
+//				fmt.Printf("key not found in map (%v)\n", key)
+//			}
 		}
 		return
 	}
@@ -145,9 +161,9 @@ func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]inte
 			return jas.objectAtPath(tail(path), sub_map) // grab the 'tail' of the slice and recurse on the submap
 		} // otherwise just return the value of 'found'
 	} else {
-		if logme {
-			fmt.Printf("key (%v) not found, or not of type (map[string]interface{})\n", path[0])
-		}
+//		if logme {
+//			fmt.Printf("key (%v) not found, or not of type (map[string]interface{})\n", path[0])
+//		}
 	}
 
 	return
@@ -171,16 +187,16 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 	leaf_map, parent_found := jas.objectAtPath(headUpToLast(path), jas.receptacle)
 
 	isArray := func() bool {
-		val, isSlice := leaf_map[last(path)].([]interface{})
-		if isSlice {
-			if logme {
-				fmt.Printf("type assertion ok:(%v)\n", val)
-			}
-		} else {
-			if logme {
-				fmt.Printf("FAIL:type assertion failed!\n")
-			}
-		}
+		_, isSlice := leaf_map[last(path)].([]interface{})
+//		if isSlice {
+//			if logme {
+//				fmt.Printf("type assertion ok:(%v)\n", val)
+//			}
+//		} else {
+//			if logme {
+//				fmt.Printf("FAIL:type assertion failed!\n")
+//			}
+//		}
 		return isSlice
 	}
 
@@ -190,9 +206,9 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 		value, found = something.([]interface{})
 	}
 
-	if logme {
-		fmt.Printf("was Array? (%v)\n", isArray())
-	}
+//	if logme {
+//		fmt.Printf("was Array? (%v)\n", isArray())
+//	}
 	return
 }
 
