@@ -1,15 +1,15 @@
 package gojas
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
-	"fmt"
 )
 
 var logme bool
 
 func init() {
-	logme=false
+	logme = false
 }
 
 func splitPath(path string) []string {
@@ -30,41 +30,59 @@ func tail(slice []string) []string {
 
 // compares two slices of interfaces, that are type-asserted to string elements, and compared for length
 // and string comparisons, in order.
-func isIdenticalStringInterfaceSlices(left []interface{},right []interface{}) (identical bool)  {
+func isIdenticalStringInterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
 	if len(left) == len(right) {
-		identical = true
-		for i, item := range left {
-			lval := item.(string)   // todo: this will panic if fails. need gentler approach for testing
-			rval := right[i].(string)
-			if lval != rval {
-				identical = false
-				break
-			}
-		}
-	}
-	return identical
-}
 
+		for i, item := range left {
+
+			if lval, lok := item.(string); lok {
+
+				if rval, rok := right[i].(string); rok {
+					if lval != rval {
+						return
+					}
+				} else {
+					return
+				}
+
+			} else {
+				return
+			}
+
+		}
+
+		identical = true
+
+	}
+	return
+}
 
 // compares two slices of interfaces, that are type-asserted to float64 elements, and compared for length
 // and float comparisons, in order.
-func isIdenticalFloat64InterfaceSlices(left []interface{},right []interface{}) (identical bool)  {
+func isIdenticalFloat64InterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
 	if len(left) == len(right) {
-		identical = true
+
 		for i, item := range left {
-			lval := item.(float64)   // todo: this will panic if fails. need gentler approach for testing
-			rval := right[i].(float64)
-			if lval != rval {
-				identical = false
-				break
+
+			if lval, lok := item.(float64); lok {
+
+				if rval, rok := right[i].(float64); rok {
+					if lval != rval {
+						return
+					}
+				} else {
+					return
+				}
+
+			} else {
+				return
 			}
 		}
+
+		identical = true
 	}
-	return identical
+	return
 }
-
-
-
 
 // recursive
 func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]interface{}) (sub_map map[string]interface{}, found bool) {
@@ -73,20 +91,26 @@ func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]inte
 	// returns true if the key exists and its value is a submap[string]interface{}
 	key_and_map := func(key string, m map[string]interface{}) (submap map[string]interface{}, foundkm bool) {
 		if sub, ok := m[key]; ok {
-			if logme{fmt.Printf("type [%v] found at [%v]\n", reflect.TypeOf(sub), key)}
+			if logme {
+				fmt.Printf("type [%v] found at [%v]\n", reflect.TypeOf(sub), key)
+			}
 			submap, foundkm = sub.(map[string]interface{})
 		} else {
-			if logme{fmt.Printf("key not found in map (%v)\n", key)}
+			if logme {
+				fmt.Printf("key not found in map (%v)\n", key)
+			}
 		}
 		return
 	}
 
 	if sub_map, found = key_and_map(path[0], receptacle); found {
 		if len(path) > 1 {
-			return jas.objectAtPath(  tail(path) , sub_map) // grab the 'tail' of the slice and recurse on the submap
+			return jas.objectAtPath(tail(path), sub_map) // grab the 'tail' of the slice and recurse on the submap
 		} // otherwise just return the value of 'found'
 	} else {
-		if logme{fmt.Printf("key (%v) not found\n", path[0])}
+		if logme {
+			fmt.Printf("key (%v) not found, or not of type (map[string]interface{})\n", path[0])
+		}
 	}
 
 	return
@@ -112,9 +136,13 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 	isArray := func() bool {
 		val, isSlice := leaf_map[last(path)].([]interface{})
 		if isSlice {
-			if logme{fmt.Printf("type assertion ok:(%v)\n", val)}
+			if logme {
+				fmt.Printf("type assertion ok:(%v)\n", val)
+			}
 		} else {
-			if logme{fmt.Printf("FAIL:type assertion failed!\n")}
+			if logme {
+				fmt.Printf("FAIL:type assertion failed!\n")
+			}
 		}
 		return isSlice
 	}
@@ -125,7 +153,9 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 		value = something.([]interface{}) // todo: catch all bad type assertion
 	}
 
-	if logme {fmt.Printf("was Array? (%v)\n", isArray())}
+	if logme {
+		fmt.Printf("was Array? (%v)\n", isArray())
+	}
 	return
 }
 
@@ -154,4 +184,3 @@ func (jas *JsonAssertion) stringAtPath(path []string) (value string, found bool)
 	}
 	return
 }
-
