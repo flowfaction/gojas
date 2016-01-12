@@ -124,20 +124,20 @@ func TestStringArrayAt(t *testing.T) {
 	original_val := []interface{}{"1","1","2","3","5","8"}
 
 	val := original_val
-	ok := jas.IsStringArrayAt(path, val)
+	ok := jas.IsIdenticalStringArrayAt(path, val)
 	if !ok {
 		t.Error("gojas: expected to find []string in sample doc @ (%v)",path)
 	}
 
 
 	val = append(val,"9")
-	ok = jas.IsStringArrayAt(path, val)
+	ok = jas.IsIdenticalStringArrayAt(path, val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find []string @ (%v)",path)
 	}
 
 	val = []interface{}{"1","1","1","3","5","8"} // same length, but diff value at index
-	ok = jas.IsStringArrayAt(path, val)
+	ok = jas.IsIdenticalStringArrayAt(path, val)
 	if ok {
 		t.Errorf("Failed to detect unequal slices of strings, of same length @ (%v)",path)
 	}
@@ -145,7 +145,7 @@ func TestStringArrayAt(t *testing.T) {
 
 	bad_path := path+"/notfound"
 	val = original_val
-	ok = jas.IsStringArrayAt(bad_path,val)
+	ok = jas.IsIdenticalStringArrayAt(bad_path,val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find any []string @ (%v)",bad_path)
 	}
