@@ -35,7 +35,7 @@ func AssertStringAtPath(t *testing.T, data, path, asserted string) (ok bool) {
 }
 func AssertStringArrayAtPath(t *testing.T, data, path string, asserted []interface{}) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		ok = jas.IsIdenticalStringArrayAt(path,asserted)
+		ok = jas.IsIdenticalStringSliceAt(path,asserted)
 	} else {
 		t.Error("AssertStringArrayAtPath"+":Failed to parse test data.")
 	}
@@ -53,7 +53,7 @@ func AssertNumberAtPath(t *testing.T, data, path string, asserted float64) (ok b
 
 func AssertFloatArrayAtPath(t *testing.T, data, path string, asserted []interface{}) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
-		ok = jas.IsFloatArrayAt(path,asserted)
+		ok = jas.IsIdenticalFloatSliceAt(path,asserted)
 	} else {
 		t.Error("AssertFloatArrayAtPath"+":Failed to parse test data.")
 	}
