@@ -1,21 +1,14 @@
-// validates unknown bytes as a correct json document - mostly through built-in decoding error generation and checking
-// provides higher level validations on the structure of the json documents, but only where amplifying value of built in checking
-// executes assertions against the tree through a text dsl, or variadics, resty url equivalents, etc
-// takes care of hairy reflection tasks to provide high-value code generation, dsl, _ ...
-
 package gojas
 
 import (
 	"encoding/json"
 	"strings"
-	log "github.com/Sirupsen/logrus"
+//	"log"
 )
 
-//----------------------------------------------------------------------------------------------------------------------
-// Exported
-//----------------------------------------------------------------------------------------------------------------------
-
-
+//JsonAssertion is the struct we use to organize our walking of the JSON doc. The decoder is
+// created by the Maker only. At the moment, the assertions are walking the JSON doc each time.
+// Consider an extended method set that can reuse a single JsonAssertion, in cases of large numbers of asserts.
 type JsonAssertion struct {
 	//	Path string
 	json       string
@@ -23,98 +16,59 @@ type JsonAssertion struct {
 	decoder    *json.Decoder
 }
 
+//MakeJsonAssertion creates and initializes a JsonAssertion, with decoder instance, or returns an error.
 func MakeJsonAssertion(data string) (jas *JsonAssertion, err error) {
 	jas = &JsonAssertion{json: data, receptacle: make(map[string]interface{})}
 	jas.decoder = json.NewDecoder(strings.NewReader(jas.json))
 	if err = jas.decoder.Decode(&jas.receptacle); err != nil {
-		log.Errorf("decoding error %v", err.Error())
+//		if logme{log.Printf("ERROR decoding:(%v)\n", err.Error())}
 	}
 	return
 }
 
 func (jas *JsonAssertion) IsObjectAt(path string) (ok bool) {
-	_, ok = jas.objectExists(splitPath(path), jas.receptacle)
+	_, ok = jas.objectAtPath(splitPath(path), jas.receptacle)
 	return
 }
 
 func (jas *JsonAssertion) IsNumberAt(path string, val float64) (ok bool) {
 	asserted := val
-	val, ok = jas.floatExists(splitPath(path))
+	val, ok = jas.floatAtPath(splitPath(path))
 	return ok && val == asserted
 }
 
 func (jas *JsonAssertion) IsBoolAt(path string, val bool) (ok bool) {
 	asserted := val
-	val, ok = jas.boolExists(splitPath(path))
+	val, ok = jas.boolAtPath(splitPath(path))
 	return ok && val == asserted
 }
 
 func (jas *JsonAssertion) IsStringAt(path string, val string) (ok bool) {
 	asserted := val
-	val, ok = jas.stringExists(splitPath(path))
+	val, ok = jas.stringAtPath(splitPath(path))
 	return ok && val == asserted
 }
 
-func (jas *JsonAssertion) IsFloatArrayAt(path string, val []interface{}) (ok bool) {
+func (jas *JsonAssertion) IsIdenticalFloatSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
-	val, ok = jas.arrayExists(splitPath(path))
-	//	log.Debugf(`
-	//		val(%v)
-	//		/val/type(%v)
-	//		/exists(%v)
-	//		/path(%v)
-	//		/asserted(%v)
-	//		/asserted/type(%v)
-	//		/deepequal?(%v)`,val,reflect.TypeOf(val),ok,path,asserted,reflect.TypeOf(asserted),reflect.DeepEqual(val, asserted))
-
-	//	for v := range val {
-	//		 log.Debugf("item type in val/[]interface{} = (%v)",reflect.TypeOf(v))
-	//	}
-	//	for x := range asserted {
-	//		 log.Debugf("item type in asserted/[]interface{} = (%v)",reflect.TypeOf(x))
-	//	}
-
-	arraysAreIdentical := func() (ident bool) {
-		if len(val) == len(asserted) {
-			ident = true
-			for i, item := range val {
-				aval := item.(float64)
-				//				log.Debugf("a[item]=(%v)",aint)
-				bval := asserted[i].(float64)
-				//				log.Debugf("b[item]=(%v)",bint)
-				if aval != bval {
-					ident = false
-					break
-				}
-			}
-		}
-		return
-	}
-	// val comes from json retrieval, asserted comes from 'client' code
-	return ok && arraysAreIdentical()
+	val, ok = jas.arrayAtPath(splitPath(path))
+	return ok && areIdenticalFloat64InterfaceSlices(val,asserted)
 }
 
-func (jas *JsonAssertion) IsStringArrayAt(path string, val []interface{}) (ok bool) {
+func (jas *JsonAssertion) IsIdenticalStringSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
-	val, ok = jas.arrayExists(splitPath(path))
-
-	arraysAreIdentical := func() (ident bool) {
-		if len(val) == len(asserted) {
-			ident = true
-			for i, item := range val {
-				aval := item.(string)   // todo: this will panic if fails. need gentler approach for testings
-				//				log.Debugf("a[item]=(%v)",aint)
-				bval := asserted[i].(string)
-				//				log.Debugf("b[item]=(%v)",bint)
-				if strings.Compare(aval, bval)!=0 {
-					ident = false
-					break
-				}
-			}
-		}
-		return
-	}
-	// val comes from json retrieval, asserted comes from 'client' code
-	return ok && arraysAreIdentical()
+	val, ok = jas.arrayAtPath(splitPath(path))
+	return ok && areIdenticalStringInterfaceSlices(val,asserted)
 }
+
+// IsMatchingStringArrayAt
+// Assert that a string array is found at the given path, which is 'similar' as in:
+// same length, same elements but not in the same order.
+func (jas *JsonAssertion) IsMatchingStringSliceAt(path string, val []interface{}) (ok bool) {
+	asserted := val
+	val, ok = jas.arrayAtPath(splitPath(path))
+	return ok && areMatchingStringInterfaceSlices(val,asserted)
+}
+
+
 

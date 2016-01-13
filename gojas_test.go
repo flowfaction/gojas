@@ -124,20 +124,20 @@ func TestStringArrayAt(t *testing.T) {
 	original_val := []interface{}{"1","1","2","3","5","8"}
 
 	val := original_val
-	ok := jas.IsStringArrayAt(path, val)
+	ok := jas.IsIdenticalStringSliceAt(path, val)
 	if !ok {
 		t.Error("gojas: expected to find []string in sample doc @ (%v)",path)
 	}
 
 
 	val = append(val,"9")
-	ok = jas.IsStringArrayAt(path, val)
+	ok = jas.IsIdenticalStringSliceAt(path, val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find []string @ (%v)",path)
 	}
 
 	val = []interface{}{"1","1","1","3","5","8"} // same length, but diff value at index
-	ok = jas.IsStringArrayAt(path, val)
+	ok = jas.IsIdenticalStringSliceAt(path, val)
 	if ok {
 		t.Errorf("Failed to detect unequal slices of strings, of same length @ (%v)",path)
 	}
@@ -145,12 +145,57 @@ func TestStringArrayAt(t *testing.T) {
 
 	bad_path := path+"/notfound"
 	val = original_val
-	ok = jas.IsStringArrayAt(bad_path,val)
+	ok = jas.IsIdenticalStringSliceAt(bad_path,val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find any []string @ (%v)",bad_path)
 	}
 
 }
+
+func TestMatchingStringArrayAt(t *testing.T) {
+
+	jas, _ := MakeJsonAssertion(json_data)
+
+	path := "/user/properties/stringArray/value"
+	original := []interface{}{"1","1","2","3","5","8"}
+
+	val := original
+	ok := jas.IsMatchingStringSliceAt(path, val)
+	if !ok {
+		t.Error("Error: expected to find []string in sample doc @ (%v)",path)
+	}
+
+
+	val = append(val,"9")
+	ok = jas.IsMatchingStringSliceAt(path, val)
+	if ok {
+		t.Errorf("Error: expected to NOT find []string @ (%v)",path)
+	}
+
+	val = []interface{}{"1","1","1","3","5","8"} // same length, but diff value at index
+	ok = jas.IsMatchingStringSliceAt(path, val)
+	if ok {
+		t.Errorf("Error: Failed to detect unequal slices of strings, of same length @ (%v)",path)
+	}
+
+
+	ok = jas.IsMatchingStringSliceAt(path, reverseInterfaceSlice(original))
+	if !ok {
+		t.Errorf("Error: Failed to matches slices of strings, of same length but different order @ (%v)",path)
+	}
+
+
+	bad_path := path+"/notfound"
+	val = original
+	ok = jas.IsMatchingStringSliceAt(bad_path,val)
+	if ok {
+		t.Errorf("gojas: expected to NOT find any []string @ (%v)",bad_path)
+	}
+
+}
+
+
+
 
 func TestFloatArrayAt(t *testing.T) {
 
@@ -160,21 +205,21 @@ func TestFloatArrayAt(t *testing.T) {
 
 	path := "/user/properties/numberArray/value"
 	val := original_val
-	ok := jas.IsFloatArrayAt(path, val)
+	ok := jas.IsIdenticalFloatSliceAt(path, val)
 	if !ok {
 		t.Error("gojas: expected to find []float64 in sample doc @ (%v)",path)
 	}
 
 
 	val = append(val, 9.0)
-	ok = jas.IsFloatArrayAt(path, val)
+	ok = jas.IsIdenticalFloatSliceAt(path, val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find []float64 @ (%v)",path)
 	}
 
 
 	val = []interface{}{1.0, 1.0, 1.0, 3.0, 5.0, 8.0} // same length, diff val at index
-	ok = jas.IsFloatArrayAt(path, val)
+	ok = jas.IsIdenticalFloatSliceAt(path, val)
 	if ok {
 		t.Errorf("Failed to detect equal slices of float64s, of same length @ (%v)",path)
 	}
@@ -182,7 +227,7 @@ func TestFloatArrayAt(t *testing.T) {
 
 	bad_path := path+"/notfound"
 	val = original_val
-	ok = jas.IsFloatArrayAt(bad_path,val)
+	ok = jas.IsIdenticalFloatSliceAt(bad_path,val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find any []float64 @ (%v)",bad_path)
 	}
