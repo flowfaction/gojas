@@ -28,6 +28,14 @@ func tail(slice []string) []string {
 	return slice[1:]
 }
 
+func reverseInterfaceSlice(original []interface{}) (reversed []interface{} ){
+	reversed = original
+	for i, j := 0, len(reversed)-1; i < j; i, j = i+1, j-1 {
+        reversed[i], reversed[j] = reversed[j], reversed[i]
+    }
+	return
+}
+
 // compares two slices of interfaces, that are type-asserted to string elements, and compared for length
 // and string comparisons, in order.
 func areIdenticalStringInterfaceSlices(left []interface{}, right []interface{}) (identical bool) {

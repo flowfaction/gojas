@@ -157,30 +157,36 @@ func TestMatchingStringArrayAt(t *testing.T) {
 	jas, _ := MakeJsonAssertion(json_data)
 
 	path := "/user/properties/stringArray/value"
-	original_val := []interface{}{"1","1","2","3","5","8"}
+	original := []interface{}{"1","1","2","3","5","8"}
 
-	val := original_val
+	val := original
 	ok := jas.IsMatchingStringSliceAt(path, val)
 	if !ok {
-		t.Error("gojas: expected to find []string in sample doc @ (%v)",path)
+		t.Error("Error: expected to find []string in sample doc @ (%v)",path)
 	}
 
 
 	val = append(val,"9")
 	ok = jas.IsMatchingStringSliceAt(path, val)
 	if ok {
-		t.Errorf("gojas: expected to NOT find []string @ (%v)",path)
+		t.Errorf("Error: expected to NOT find []string @ (%v)",path)
 	}
 
 	val = []interface{}{"1","1","1","3","5","8"} // same length, but diff value at index
 	ok = jas.IsMatchingStringSliceAt(path, val)
 	if ok {
-		t.Errorf("Failed to detect unequal slices of strings, of same length @ (%v)",path)
+		t.Errorf("Error: Failed to detect unequal slices of strings, of same length @ (%v)",path)
+	}
+
+
+	ok = jas.IsMatchingStringSliceAt(path, reverseInterfaceSlice(original))
+	if !ok {
+		t.Errorf("Error: Failed to matches slices of strings, of same length but different order @ (%v)",path)
 	}
 
 
 	bad_path := path+"/notfound"
-	val = original_val
+	val = original
 	ok = jas.IsMatchingStringSliceAt(bad_path,val)
 	if ok {
 		t.Errorf("gojas: expected to NOT find any []string @ (%v)",bad_path)
