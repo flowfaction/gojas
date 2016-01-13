@@ -1,16 +1,16 @@
 package gojas
 
 import (
-//	"fmt"
+//	"log"
 	"reflect"
 	"strings"
 )
 
-var logme bool
-
-func init() {
-	logme = false
-}
+//var logme bool
+//
+//func init() {
+//	logme = false
+//}
 
 func splitPath(path string) []string {
 	return strings.Split(path, "/")[1:] // discard the first empty slot due to leading '/'
@@ -153,12 +153,12 @@ func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]inte
 	key_and_map := func(key string, m map[string]interface{}) (submap map[string]interface{}, foundkm bool) {
 		if sub, ok := m[key]; ok {
 //			if logme {
-//				fmt.Printf("type [%v] found at [%v]\n", reflect.TypeOf(sub), key)
+//				log.Printf("type [%v] found at [%v]\n", reflect.TypeOf(sub), key)
 //			}
 			submap, foundkm = sub.(map[string]interface{})
 		} else {
 //			if logme {
-//				fmt.Printf("key not found in map (%v)\n", key)
+//				log.Printf("key not found in map (%v)\n", key)
 //			}
 		}
 		return
@@ -170,7 +170,7 @@ func (jas *JsonAssertion) objectAtPath(path []string, receptacle map[string]inte
 		} // otherwise just return the value of 'found'
 	} else {
 //		if logme {
-//			fmt.Printf("key (%v) not found, or not of type (map[string]interface{})\n", path[0])
+//			log.Printf("key (%v) not found, or not of type (map[string]interface{})\n", path[0])
 //		}
 	}
 
@@ -198,11 +198,11 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 		_, isSlice := leaf_map[last(path)].([]interface{})
 //		if isSlice {
 //			if logme {
-//				fmt.Printf("type assertion ok:(%v)\n", val)
+//				log.Printf("type assertion ok:(%v)\n", val)
 //			}
 //		} else {
 //			if logme {
-//				fmt.Printf("FAIL:type assertion failed!\n")
+//				log.Printf("FAIL:type assertion failed!\n")
 //			}
 //		}
 		return isSlice
@@ -215,7 +215,7 @@ func (jas *JsonAssertion) arrayAtPath(path []string) (value []interface{}, found
 	}
 
 //	if logme {
-//		fmt.Printf("was Array? (%v)\n", isArray())
+//		log.Printf("was Array? (%v)\n", isArray())
 //	}
 	return
 }

@@ -3,7 +3,7 @@ package gojas
 import (
 	"encoding/json"
 	"strings"
-//	"fmt"
+//	"log"
 )
 
 //JsonAssertion is the struct we use to organize our walking of the JSON doc. The decoder is
@@ -21,7 +21,7 @@ func MakeJsonAssertion(data string) (jas *JsonAssertion, err error) {
 	jas = &JsonAssertion{json: data, receptacle: make(map[string]interface{})}
 	jas.decoder = json.NewDecoder(strings.NewReader(jas.json))
 	if err = jas.decoder.Decode(&jas.receptacle); err != nil {
-//		if logme{fmt.Printf("ERROR decoding:(%v)\n", err.Error())}
+//		if logme{log.Printf("ERROR decoding:(%v)\n", err.Error())}
 	}
 	return
 }
