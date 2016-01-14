@@ -34,28 +34,43 @@ func TestAssertObject(t *testing.T) {
 //Tests whether an object exists at a path, and then tests that it contains known property names aka keys.
 func TestAssertObjectKeys(t *testing.T) {
 	path := "/user/properties/object/innerObject"
+	bad_path := "/user/properties/object/inner_"
+	keys := []string{"foo","baz","key"}
 
-	ok := AssertObjectAtPath(t,asserted_json_data,path)
+	ok := AssertObjectAtPathWithKeys(t,asserted_json_data,path,keys)
 	if !ok {
-		t.Fatal("Failed to assert existence of known object at known path")
+		t.Fatal("Failed to assert existence of object at path with known keys.")
 	}
 
-	ok = AssertObjectAtPathWithKeys(t,asserted_json_data,path,[]string{"foo","baz","key"})
-	if !ok {
-		t.Fatalf("Failed to assert existence of object at path with known keys.")
+	sim := *t
+	bad_path_keys := AssertObjectAtPathWithKeys(&sim,asserted_json_data, bad_path,keys)
+	if !sim.Failed() || bad_path_keys {
+		t.Fatal("Failed to assert non-existence of object at fake or bad path, failed to fail the test.")
+	} else {
+		t.Log("Test assertion successfully detected non-existent path, and failed the test object. win!")
 	}
 
 
-	cloned_t := *t
-	keys_ok := AssertObjectAtPathWithKeys(&cloned_t,asserted_json_data,path,[]string{"foo","baz","ishouldnotexist"})
-	if !cloned_t.Failed() || keys_ok { // should have marked test as failed, but didn't
+	// assert that it fails when it should
+	sim = *t
+	keys_ok := AssertObjectAtPathWithKeys(&sim,asserted_json_data,path,[]string{"foo","baz","ishouldnotexist"})
+	if !sim.Failed() || keys_ok { // should have marked test as failed, but didn't
 		t.Fatal("Test assertion failed to detect missing property key in target JSON object. fail!")
 	} else {
-		t.Logf("Test assertion successfully detected non-existent but asserted key in json doc.")
+		t.Log("Test assertion successfully detected non-existent but asserted key in json doc. win!")
 	}
 
-}
+	//assert that it fails when it can't parse the json data to begin with
+	sim = *t
+	_ = AssertObjectAtPathWithKeys(&sim,bad_json_data,path,keys)
+	if !sim.Failed() { // should have marked test as failed
+		t.Fatal("Failed to fail test when detecting parse error or failing to MakeJsonAssertion()")
+	} else {
+		t.Log("test assertion had error parsing intentionally bad json data, as expected. win!")
+	}
 
+
+}
 
 
 func TestAssertNumber(t *testing.T) {
