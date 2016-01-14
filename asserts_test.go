@@ -8,19 +8,17 @@ import (
 func TestAssertObject(t *testing.T) {
 	path := "/user/properties/object/innerObject"
 
-	ok := AssertObjectAtPath(t,asserted_json_data,path)
-	if !ok {
+	if ok := AssertObjectAtPath(t,asserted_json_data,path); !ok {
 		t.Fatal("Failed to assert existence of known object at known path")
 	}
 
-	ok = AssertObjectAtPath(t,asserted_json_data,"/user/properties/object/inner__")
-	if ok {
+	if ok := AssertObjectAtPath(t,asserted_json_data,"/user/properties/object/inner__"); ok {
 		t.Fatal("Failed to assert non-existence of object at fake or bad path")
 	}
 
-	cloned_t := *t
-	_ = AssertObjectAtPath(&cloned_t,bad_json_data,path)
-	if !cloned_t.Failed() { // should have marked test as failed
+	sim := *t
+	_ = AssertObjectAtPath(&sim,bad_json_data,path)
+	if !sim.Failed() { // should have marked test as failed
 		t.Logf("test assertion failed to detect parsing error on intentionally bad data. fail!")
 		t.Fatal("Failed to fail test when detecting parse error or failing to make a JsonAssertion")
 	} else {
@@ -37,8 +35,7 @@ func TestAssertObjectKeys(t *testing.T) {
 	bad_path := "/user/properties/object/inner_"
 	keys := []string{"foo","baz","key"}
 
-	ok := AssertObjectAtPathWithKeys(t,asserted_json_data,path,keys)
-	if !ok {
+	if ok := AssertObjectAtPathWithKeys(t,asserted_json_data,path,keys); !ok {
 		t.Fatal("Failed to assert existence of object at path with known keys.")
 	}
 
@@ -74,23 +71,20 @@ func TestAssertObjectKeys(t *testing.T) {
 
 
 func TestAssertNumber(t *testing.T) {
-
 	var val float64 = 11235
 	path := "/user/properties/object/innerObject/baz"
 
-	ok := AssertNumberAtPath(t,asserted_json_data,path,val)
-	if !ok {
+	if ok := AssertNumberAtPath(t,asserted_json_data,path,val); !ok {
 		t.Fatal("Failed to assert matching float value at given path")
 	}
 
-	ok = AssertNumberAtPath(t,asserted_json_data,path,val*2)
-	if ok {
+	if ok := AssertNumberAtPath(t,asserted_json_data,path,val*2); ok {
 		t.Fatal("Failed to fail assert of non-matching float value at known path")
 	}
 
-	cloned_t := *t
-	_ = AssertNumberAtPath(&cloned_t,bad_json_data,path,val)
-	if !cloned_t.Failed() { // should have marked test as failed
+	sim := *t
+	_ = AssertNumberAtPath(&sim,bad_json_data,path,val)
+	if !sim.Failed() { // should have marked test as failed
 		t.Logf("test assertion failed to detect parsing error on intentionally bad data. fail!")
 		t.Fatal("Failed to fail test when detecting parse error or failing to make a JsonAssertion")
 	} else {
@@ -101,20 +95,17 @@ func TestAssertNumber(t *testing.T) {
 }
 
 func TestAssertFloatArray(t *testing.T) {
-
 	original_val := []interface{}{1.0, 1.0, 2.0, 3.0, 5.0, 8.0}
 
 	path := "/user/properties/numberArray/value"
 	val := original_val
 
-	ok := AssertFloatArrayAtPath(t,asserted_json_data,path,val)
-	if !ok {
+	if ok := AssertFloatArrayAtPath(t,asserted_json_data,path,val);	!ok {
 		t.Fatal("Failed to pass asserted float array at known path")
 	}
 
 	val = append(val,9.0)
-	ok = AssertFloatArrayAtPath(t,asserted_json_data,path,val)
-	if ok {
+	if ok := AssertFloatArrayAtPath(t,asserted_json_data,path,val); ok {
 		t.Fatal("Failed to fail assert of modified float array at known path")
 	}
 
@@ -137,21 +128,19 @@ func TestAssertStringArray(t *testing.T) {
 	val := original_val
 
 	path := "/user/properties/stringArray/value"
-	ok := AssertStringArrayAtPath(t,asserted_json_data,path,val)
-	if !ok {
+	if ok := AssertStringArrayAtPath(t,asserted_json_data,path,val);!ok {
 		t.Fatal("Failed to pass asserted string array at known path")
 	}
 
 
 	val = append(val,"9")
-	ok = AssertStringArrayAtPath(t,asserted_json_data,path,val)
-	if ok {
+	if ok := AssertStringArrayAtPath(t,asserted_json_data,path,val); ok {
 		t.Fatal("Failed to fail assert of modified string array at known path")
 	}
 
-	cloned_t := *t
-	_ = AssertStringArrayAtPath(&cloned_t,bad_json_data,path,val)
-	if !cloned_t.Failed() { // should have marked test as failed
+	sim := *t
+	_ = AssertStringArrayAtPath(&sim,bad_json_data,path,val)
+	if !sim.Failed() { // should have marked test as failed
 		t.Logf("test assertion failed to detect parsing error on intentionally bad data. fail!")
 		t.Fatal("Failed to fail test when detecting parse error or failing to make a JsonAssertion")
 	} else {
@@ -167,20 +156,18 @@ func TestAssertString(t *testing.T) {
 	path := "/user/properties/string/value"
 
 	val := "foobar"
-	ok := AssertStringAtPath(t,asserted_json_data,path,val)
-	if !ok {
+	if ok := AssertStringAtPath(t,asserted_json_data,path,val); !ok {
 		t.Fatal("Failed to pass assert string('foobar') at known path")
 	}
 
-	ok = AssertStringAtPath(t,asserted_json_data,path,"shouldnotbethere")
-	if ok {
+	if ok := AssertStringAtPath(t,asserted_json_data,path,"shouldnotbethere"); ok {
 		t.Fatal("Failed to fail assert of string('shouldnotbethere') at known path")
 	}
 
 
-	cloned_t := *t
-	_ = AssertStringAtPath(&cloned_t,bad_json_data,path,val)
-	if !cloned_t.Failed() { // should have marked test as failed
+	sim := *t
+	_ = AssertStringAtPath(&sim,bad_json_data,path,val)
+	if !sim.Failed() { // should have marked test as failed
 		t.Logf("test assertion failed to detect parsing error on intentionally bad data. fail!")
 		t.Fatal("Failed to fail test when detecting parse error or failing to make a JsonAssertion")
 	} else {
@@ -193,19 +180,17 @@ func TestAssertString(t *testing.T) {
 func TestAssertBool(t *testing.T) {
 	path := "/user/properties/boolean/value"
 
-	ok := AssertBoolAtPath(t,asserted_json_data,path,true)
-	if !ok {
+	if ok := AssertBoolAtPath(t,asserted_json_data,path,true);!ok {
 		t.Fatal("Failed to pass assert boolean(true) at known path")
 	}
 
-	ok = AssertBoolAtPath(t,asserted_json_data,path,false)
-	if ok {
+	if ok := AssertBoolAtPath(t,asserted_json_data,path,false); ok {
 		t.Fatal("Failed to fail assert of not boolean(false) at known path")
 	}
 
-	cloned_t := *t
-	_ = AssertBoolAtPath(&cloned_t,bad_json_data,path,true)
-	if !cloned_t.Failed() { // should have marked test as failed
+	sim := *t
+	_ = AssertBoolAtPath(&sim,bad_json_data,path,true)
+	if !sim.Failed() { // should have marked test as failed
 		t.Logf("test assertion failed to detect parsing error on intentionally bad data. fail!")
 		t.Fatal("Failed to fail test when detecting parse error or failing to make a JsonAssertion")
 	} else {
