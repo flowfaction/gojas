@@ -55,6 +55,17 @@ func (jas *JsonAssertion) IsIdenticalFloatSliceAt(path string, val []interface{}
 	return ok && areIdenticalFloat64InterfaceSlices(val,asserted)
 }
 
+//IsMatchingFloatSliceAt looks for a float slice at the given path,
+// and if it finds one, compares them without regard to their ordering.
+func (jas *JsonAssertion) IsMatchingFloatSliceAt(path string, val []interface{}) (ok bool) {
+	asserted := val
+	val, ok = jas.arrayAtPath(splitPath(path))
+	return ok && areMatchingFloat64InterfaceSlices(val,asserted)
+}
+
+
+
+
 func (jas *JsonAssertion) IsIdenticalStringSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
 	val, ok = jas.arrayAtPath(splitPath(path))

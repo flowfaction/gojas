@@ -201,5 +201,46 @@ func TestFloatArrayAt(t *testing.T) {
 
 
 
+func TestMatchingFloatArrayAt(t *testing.T) {
+	path := "/user/properties/numberArray/value"
+
+	jas, _ := MakeJsonAssertion(json_data)
+
+	original := []interface{}{1.0, 1.0, 2.0, 3.0, 5.0, 8.0}
+
+	val := original
+	ok := jas.IsMatchingFloatSliceAt(path, val)
+	if !ok {
+		t.Error("Error: expected to find []float64 in sample doc @path(%v)",path)
+	}
+
+
+	val = append(val,9.0)
+	ok = jas.IsMatchingFloatSliceAt(path, val)
+	if ok {
+		t.Errorf("Error: expected to NOT find []float64 @ (%v)",path)
+	}
+
+	val = []interface{}{1.0, 1.0, 1.0, 3.0, 5.0, 8.0} // same length, but diff value at index 2
+	ok = jas.IsMatchingFloatSliceAt(path, val)
+	if ok {
+		t.Errorf("Error: Failed to detect unequal slices of float64s, of same length @ (%v)",path)
+	}
+
+
+	ok = jas.IsMatchingFloatSliceAt(path, reverseInterfaceSlice(original))
+	if !ok {
+		t.Errorf("Error: Failed to matches slices of floats, of same length but different order @ (%v)",path)
+	}
+
+
+	bad_path := path+"/notfound"
+	val = original
+	ok = jas.IsMatchingFloatSliceAt(bad_path,val)
+	if ok {
+		t.Errorf("gojas: expected to NOT find any []float64 @ (%v)",bad_path)
+	}
+
+}
 
 
