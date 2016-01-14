@@ -8,11 +8,11 @@ import (
 func TestAssertObject(t *testing.T) {
 	path := "/user/properties/object/innerObject"
 
-	if ok := AssertObjectAtPath(t,asserted_json_data,path); !ok {
+	if !AssertObjectAtPath(t,asserted_json_data,path) {
 		t.Fatal("Failed to assert existence of known object at known path")
 	}
 
-	if ok := AssertObjectAtPath(t,asserted_json_data,"/user/properties/object/inner__"); ok {
+	if AssertObjectAtPath(t,asserted_json_data,"/user/properties/object/inner__"){
 		t.Fatal("Failed to assert non-existence of object at fake or bad path")
 	}
 
@@ -35,7 +35,7 @@ func TestAssertObjectKeys(t *testing.T) {
 	bad_path := "/user/properties/object/inner_"
 	keys := []string{"foo","baz","key"}
 
-	if ok := AssertObjectAtPathWithKeys(t,asserted_json_data,path,keys); !ok {
+	if !AssertObjectAtPathWithKeys(t,asserted_json_data,path,keys) {
 		t.Fatal("Failed to assert existence of object at path with known keys.")
 	}
 
@@ -74,11 +74,11 @@ func TestAssertNumber(t *testing.T) {
 	var val float64 = 11235
 	path := "/user/properties/object/innerObject/baz"
 
-	if ok := AssertNumberAtPath(t,asserted_json_data,path,val); !ok {
+	if !AssertNumberAtPath(t,asserted_json_data,path,val) {
 		t.Fatal("Failed to assert matching float value at given path")
 	}
 
-	if ok := AssertNumberAtPath(t,asserted_json_data,path,val*2); ok {
+	if AssertNumberAtPath(t,asserted_json_data,path,val*2){
 		t.Fatal("Failed to fail assert of non-matching float value at known path")
 	}
 
@@ -100,12 +100,12 @@ func TestAssertFloatArray(t *testing.T) {
 	path := "/user/properties/numberArray/value"
 	val := original_val
 
-	if ok := AssertFloatArrayAtPath(t,asserted_json_data,path,val);	!ok {
+	if !AssertFloatArrayAtPath(t,asserted_json_data,path,val) {
 		t.Fatal("Failed to pass asserted float array at known path")
 	}
 
 	val = append(val,9.0)
-	if ok := AssertFloatArrayAtPath(t,asserted_json_data,path,val); ok {
+	if AssertFloatArrayAtPath(t,asserted_json_data,path,val){
 		t.Fatal("Failed to fail assert of modified float array at known path")
 	}
 
@@ -128,13 +128,13 @@ func TestAssertStringArray(t *testing.T) {
 	val := original_val
 
 	path := "/user/properties/stringArray/value"
-	if ok := AssertStringArrayAtPath(t,asserted_json_data,path,val);!ok {
+	if !AssertStringArrayAtPath(t,asserted_json_data,path,val) {
 		t.Fatal("Failed to pass asserted string array at known path")
 	}
 
 
 	val = append(val,"9")
-	if ok := AssertStringArrayAtPath(t,asserted_json_data,path,val); ok {
+	if AssertStringArrayAtPath(t,asserted_json_data,path,val) {
 		t.Fatal("Failed to fail assert of modified string array at known path")
 	}
 
@@ -156,11 +156,11 @@ func TestAssertString(t *testing.T) {
 	path := "/user/properties/string/value"
 
 	val := "foobar"
-	if ok := AssertStringAtPath(t,asserted_json_data,path,val); !ok {
+	if !AssertStringAtPath(t,asserted_json_data,path,val) {
 		t.Fatal("Failed to pass assert string('foobar') at known path")
 	}
 
-	if ok := AssertStringAtPath(t,asserted_json_data,path,"shouldnotbethere"); ok {
+	if AssertStringAtPath(t,asserted_json_data,path,"shouldnotbethere") {
 		t.Fatal("Failed to fail assert of string('shouldnotbethere') at known path")
 	}
 
@@ -180,11 +180,11 @@ func TestAssertString(t *testing.T) {
 func TestAssertBool(t *testing.T) {
 	path := "/user/properties/boolean/value"
 
-	if ok := AssertBoolAtPath(t,asserted_json_data,path,true);!ok {
+	if !AssertBoolAtPath(t,asserted_json_data,path,true) {
 		t.Fatal("Failed to pass assert boolean(true) at known path")
 	}
 
-	if ok := AssertBoolAtPath(t,asserted_json_data,path,false); ok {
+	if AssertBoolAtPath(t,asserted_json_data,path,false) {
 		t.Fatal("Failed to fail assert of not boolean(false) at known path")
 	}
 
