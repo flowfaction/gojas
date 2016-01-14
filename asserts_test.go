@@ -24,12 +24,38 @@ func TestAssertObject(t *testing.T) {
 		t.Logf("test assertion failed to detect parsing error on intentionally bad data. fail!")
 		t.Fatal("Failed to fail test when detecting parse error or failing to make a JsonAssertion")
 	} else {
-//		// it did fail, but we want to reset the status for the purposes of this outer self-test
 		t.Logf("test assertion had error parsing intentionally bad json data, as expected. win!")
 	}
 
 
 }
+
+
+//Tests whether an object exists at a path, and then tests that it contains known property names aka keys.
+func TestAssertObjectKeys(t *testing.T) {
+	path := "/user/properties/object/innerObject"
+
+	ok := AssertObjectAtPath(t,asserted_json_data,path)
+	if !ok {
+		t.Fatal("Failed to assert existence of known object at known path")
+	}
+
+	ok = AssertObjectAtPathWithKeys(t,asserted_json_data,path,[]string{"foo","baz","key"})
+	if !ok {
+		t.Fatalf("Failed to assert existence of object at path with known keys.")
+	}
+
+
+	cloned_t := *t
+	keys_ok := AssertObjectAtPathWithKeys(&cloned_t,asserted_json_data,path,[]string{"foo","baz","ishouldnotexist"})
+	if !cloned_t.Failed() || keys_ok { // should have marked test as failed, but didn't
+		t.Fatal("Test assertion failed to detect missing property key in target JSON object. fail!")
+	} else {
+		t.Logf("Test assertion successfully detected non-existent but asserted key in json doc.")
+	}
+
+}
+
 
 
 func TestAssertNumber(t *testing.T) {

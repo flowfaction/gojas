@@ -6,7 +6,7 @@ import (
 
 
 func TestAssertionMaker(t *testing.T) {
-	_, err := MakeJsonAssertion(json_data)
+	_, err := MakeJsonAssertion(asserted_json_data)
 	if err!=nil {
 		t.Fatal("gojas: failed to parse json data")
 	}
@@ -15,7 +15,7 @@ func TestAssertionMaker(t *testing.T) {
 
 func TestObjectAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	path := "/user/properties/object/innerObject"
 	ok := jas.IsObjectAt(path)
@@ -36,7 +36,7 @@ func TestObjectAt(t *testing.T) {
 
 func TestNumberAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	path := "/user/properties/object/innerObject/baz"
 	var val float64 = 11235
@@ -63,7 +63,7 @@ func TestNumberAt(t *testing.T) {
 
 func TestBoolAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	path := "/user/properties/boolean/value"
 	ok := jas.IsBoolAt(path, true)
@@ -89,7 +89,7 @@ func TestBoolAt(t *testing.T) {
 
 func TestStringAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	path := "/user/properties/string/value"
 	val := "foobar"
@@ -118,7 +118,7 @@ func TestStringAt(t *testing.T) {
 
 func TestStringArrayAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	path := "/user/properties/stringArray/value"
 	original_val := []interface{}{"1","1","2","3","5","8"}
@@ -154,7 +154,7 @@ func TestStringArrayAt(t *testing.T) {
 
 func TestMatchingStringArrayAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	path := "/user/properties/stringArray/value"
 	original := []interface{}{"1","1","2","3","5","8"}
@@ -199,7 +199,7 @@ func TestMatchingStringArrayAt(t *testing.T) {
 
 func TestFloatArrayAt(t *testing.T) {
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	original_val := []interface{}{1.0, 1.0, 2.0, 3.0, 5.0, 8.0}
 

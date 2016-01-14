@@ -14,6 +14,31 @@ func AssertObjectAtPath(t *testing.T, data, path string) (ok bool) {
 	return
 }
 
+//AssertObjectAtPathWithKeys attempts to locate an object (a JSON doc) at a given path.
+// Given that there is an object there, it will assert that ALL the given property keys are found
+// in the object, ignoring their value.
+func AssertObjectAtPathWithKeys(t *testing.T, data, path string, keys []string) (ok bool) {
+	if jas, err := MakeJsonAssertion(data); err==nil {
+		if ok = jas.IsObjectAt(path); !ok {
+			t.Fatalf("AssertObjectAtPathWithKeys"+":Failed to find JSON object at given path.")
+		} else {
+			var obj map[string]interface{}
+			obj,_ = jas.objectAtPath(splitPath(path), jas.receptacle)
+			for _,k := range keys {
+				if _, found := obj[k]; !found {
+					t.Logf("AssertObjectAtPathWithKeys: Asserted property key was not found in target JSON doc.")
+					t.Fail()
+					return false
+				}
+			}
+		}
+	} else {
+		t.Error("AssertObjectAtPathWithKeys: Failed to parse test data.")
+	}
+	return
+}
+
+
 func AssertBoolAtPath(t *testing.T, data, path string, asserted bool) (ok bool) {
 	if jas, err := MakeJsonAssertion(data); err==nil {
 		ok = jas.IsBoolAt(path,asserted)
