@@ -31,7 +31,7 @@ func TestIdenticalStringSlices(t *testing.T) {
 }
 
 func TestMatchingStringSlices(t *testing.T) {
-	sliceLeft := []interface{}{"1", "1", "2", "3", "5", "8", "13"}
+	sliceLeft  := []interface{}{"1", "1", "2", "3", "5", "8", "13"}
 	sliceRight := []interface{}{"13", "1", "1", "2", "3", "5", "8"}
 
 	left, right := sliceLeft, sliceRight
@@ -43,14 +43,12 @@ func TestMatchingStringSlices(t *testing.T) {
 	}
 
 	left, right = []interface{}{"1", 1, "2", "3", "5", "8", "13"}, sliceRight
-	// should not match if it finds the numeric '1' instead of a string
 	identical = areMatchingStringInterfaceSlices(left, right)
 	if identical {
 		t.Errorf("Failed to detect a left-val element that is not a string, in interface slices.")
 	}
 
 	left, right = sliceLeft, []interface{}{"1", "1", "2", "3", "5", "8", 13}
-	// should not match if it finds the numeric '13' instead of a string
 	identical = areMatchingStringInterfaceSlices(left, right)
 	if identical {
 		t.Errorf("Failed to detect a right-val element that is not a string, in interface slices.")
@@ -60,7 +58,7 @@ func TestMatchingStringSlices(t *testing.T) {
 	// should not match because the left starts with a "42"
 	identical = areMatchingStringInterfaceSlices(left, right)
 	if identical {
-		t.Errorf("Failed to detect a right-val element that is not a string, in interface slices.")
+		t.Errorf("Failed to detect a right-val element that doesn't appear in the left slice")
 	}
 
 
