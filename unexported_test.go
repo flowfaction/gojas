@@ -57,11 +57,21 @@ func TestMatchingStringSlices(t *testing.T) {
 	}
 
 	left, right = []interface{}{"42", "1", "2", "3", "5", "8", "13"}, sliceRight
-	// should not match if it finds the numeric '13' instead of a string
+	// should not match because the left starts with a "42"
 	identical = areMatchingStringInterfaceSlices(left, right)
 	if identical {
 		t.Errorf("Failed to detect a right-val element that is not a string, in interface slices.")
 	}
+
+
+	left, right = sliceLeft, []interface{}{"1", "1", "1", "2", "3", "5", "8","13"}
+	// should not match because the right has 3 '1's and left only has 2
+	identical = areMatchingStringInterfaceSlices(left, right)
+	if identical {
+		t.Errorf("Failed to detect a right-val element that matches a left-val, but at different frequency")
+	}
+
+
 
 }
 
