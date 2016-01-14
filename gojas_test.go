@@ -34,7 +34,6 @@ func TestNumberAt(t *testing.T) {
 
 	jas, _ := MakeJsonAssertion(asserted_json_data)
 
-	var val float64 = 11235
 	if !jas.IsNumberAt(path, val) {
 		t.Error("gojas: expected to find float(11235) in sample doc @ (%v)",path)
 	}
@@ -196,7 +195,7 @@ func TestMatchingFloatArrayAt(t *testing.T) {
 	original := []interface{}{1.0, 1.0, 2.0, 3.0, 5.0, 8.0}
 	val := original
 
-	jas, _ := MakeJsonAssertion(json_data)
+	jas, _ := MakeJsonAssertion(asserted_json_data)
 
 	if !jas.IsMatchingFloatSliceAt(path, val) {
 		t.Error("Error: expected to find []float64 in sample doc @path(%v)", path)
