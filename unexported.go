@@ -140,6 +140,48 @@ func areIdenticalFloat64InterfaceSlices(left []interface{}, right []interface{})
 }
 
 
+func areMatchingFloat64InterfaceSlices(left []interface{}, right []interface{}) (identical bool) {
+
+	if len(left) == len(right) {
+
+		// make the frequency map for the left slice and populate it
+		lmap := make(map[float64]int,len(left))
+		for _, item := range left {
+			if value, sok := item.(float64); sok {
+				lmap[value]=lmap[value]+1
+			} else {
+				return
+			}
+		}
+
+		// make the frequency map for the right slice and populate it
+		rmap := make(map[float64]int,len(right))
+		for _, item := range right {
+			if value, sok := item.(float64); sok {
+				rmap[value]=rmap[value]+1
+			} else {
+				return
+			}
+		}
+
+		// range on left map, using the lkey to look up on rmap
+		for lk,lv := range lmap {
+			if rv, rok := rmap[lk]; rok {
+				// lkey found in rmap, but same frequency?
+				if lv!=rv {
+					return
+				}
+
+			} else { // left key not found in rmap, so bail
+				return
+			}
+		}
+
+		identical = true
+	}
+	return
+}
+
 
 
 
