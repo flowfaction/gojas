@@ -1,19 +1,22 @@
-# Gojas: Golang JSON Assertions. v0.1.0
+# Gojas: Golang JSON Assertions
 
-## Values
+## Values:
+### Compatible, Fast, Hackable, Usable, Native, Minimal, Readable.
 
-### minimal
-### compatible
-### performant
-### hackable
-### simplifying
-### low dep
+## Importing
+
+To add to your project, import:
+```
+import "github.com/flowfaction/gojas"
+```
+There are no dependencies on 3rd party components, only native Go packages.
+
 
 ## Pull Requests
 
 Your PRs are welcome! The goal is to evolve this package toward more testing scenarios and reliability. Accepting issue posts as well, thank you.
 
-## Basic Use
+## Example
 
 For most routine testing, just use the assertions in the package. For example
 
