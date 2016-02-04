@@ -65,16 +65,18 @@ func (jas *JsonAssertion) IsMatchingFloatSliceAt(path string, val []interface{})
 
 
 
-
+// IsIdenticalStringSliceAt
+// Assert that a string array is found at the given path, which is 'identical' as in:
+// same length, same elements AND in the same order.
 func (jas *JsonAssertion) IsIdenticalStringSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
 	val, ok = jas.arrayAtPath(splitPath(path))
 	return ok && areIdenticalStringInterfaceSlices(val,asserted)
 }
 
-// IsMatchingStringArrayAt
+// IsMatchingStringSliceAt
 // Assert that a string array is found at the given path, which is 'similar' as in:
-// same length, same elements but not in the same order.
+// same length, same elements but not necessarily in the same order.
 func (jas *JsonAssertion) IsMatchingStringSliceAt(path string, val []interface{}) (ok bool) {
 	asserted := val
 	val, ok = jas.arrayAtPath(splitPath(path))
